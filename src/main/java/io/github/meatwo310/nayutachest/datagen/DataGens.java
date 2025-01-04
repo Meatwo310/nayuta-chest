@@ -23,7 +23,7 @@ public class DataGens {
         ExistingFileHelper efh = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-//        LanguageGen.register(includeClient, generator);
+        LangGen.register(includeClient, generator);
         ModelGen.register(includeClient, generator, output, efh);
 
         TagGen.register(includeServer, generator, output, lookupProvider, efh);
