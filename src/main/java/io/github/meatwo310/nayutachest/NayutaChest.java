@@ -27,7 +27,7 @@ public class NayutaChest {
         ModBlockEntities.register(modEventBus);
         ModItems.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
-//        ModMenus.register(modEventBus);
+        ModMenus.register(modEventBus);
 //        ModRecipes.register(modEventBus);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);

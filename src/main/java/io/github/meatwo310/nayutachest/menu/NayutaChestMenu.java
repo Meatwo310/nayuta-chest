@@ -2,41 +2,44 @@ package io.github.meatwo310.nayutachest.menu;
 
 import io.github.meatwo310.nayutachest.block.ModBlocks;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
+import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class NayutaChestMenu extends AbstractContainerMenu {
     private final NayutaChestBE nayutaChestBlock;
     private final ContainerLevelAccess containerLevelAccess;
-    private final ContainerData containerData;
+//    private final ContainerData containerData;
 
     // Client
     public NayutaChestMenu(int containerId, Inventory playerInventory, FriendlyByteBuf extraData) {
-        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+//        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(extraData.readBlockPos()));
     }
 
     // Server
-    public NayutaChestMenu(int id, Inventory playerInventory, BlockEntity blockEntity, ContainerData containerData) {
-        super(ModMenus.NAYUTA_CHEST_MENU.get(), id);
+    public NayutaChestMenu(int containerId, Inventory playerInventory, BlockEntity blockEntity) {
+        super(ModMenus.NAYUTA_CHEST_MENU.get(), containerId);
         if (blockEntity instanceof NayutaChestBE be) {
             this.nayutaChestBlock = be;
         } else {
-            throw new IllegalStateException("MachineCoreMenu: BlockEntity is not an instance of MachineCoreTile");
+            throw new IllegalStateException("BlockEntity is not an instance of NayutaChestBE");
         }
 
         this.containerLevelAccess = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
-        this.containerData = containerData;
+//        this.containerData = containerData;
 
         createPlayerHotbar(playerInventory);
         createPlayerInventory(playerInventory);
         createBESlots(be);
 
-        addDataSlots(containerData);
+//        addDataSlots(containerData);
     }
 
     private void createPlayerHotbar(Inventory playerInventory) {
@@ -48,61 +51,30 @@ public class NayutaChestMenu extends AbstractContainerMenu {
     private void createPlayerInventory(Inventory playerInventory) {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                this.addSlot(new Slot(playerInventory, column + row * 9 + 9, 8 + column * 18, 84 + row * 18));
+                this.addSlot(new Slot(
+                        playerInventory,
+                        column + row * 9 + 9,
+                        8 + column * 18,
+                        84 + row * 18
+                ));
             }
         }
     }
 
     private void createBESlots(NayutaChestBE blockEntity) {
-//        blockEntity.moduleLazyOptional.ifPresent(inventory ->
-//                this.addSlot(new SlotItemHandler(inventory, 0, 8, 18))
-//        );
-//        blockEntity.upgradeLazyOptional.ifPresent(inventory -> {
-//            for (int i = 0; i < 2; i++) {
-//                this.addSlot(new SlotItemHandler(inventory, i, 8, 36 + i * 18));
-//            }
-//            for (int j = 0; j < 3; j++) {
-//                this.addSlot(new SlotItemHandler(inventory, j + 2, 152, 18 + j * 18));
-//            }
-//        });
-//        blockEntity.inputLazyOptional.ifPresent(inventory -> {
-//            for (int i = 0; i < 4; i++) {
-//                this.addSlot(new SlotItemHandler(inventory, i, 35 + (i % 2) * 18, 18 + (i / 2) * 18));
-//            }
-//        });
-//        blockEntity.outputLazyOptional.ifPresent(inventory -> {
-//            for (int i = 0; i < 4; i++) {
-//                this.addSlot(new SlotItemHandler(inventory, i, 107 + (i % 2) * 18, 18 + (i / 2) * 18));
-//            }
-//        });
+        blockEntity.displayHandlerLazyOptional.ifPresent(displayHandler ->
+                this.addSlot(new SlotItemHandler(displayHandler, 0, 80, 35))
+        );
+        blockEntity.chestHandlerLazyOptional.ifPresent(chestHandler -> {
+            this.addSlot(new SlotItemHandler(chestHandler, NayutaChestHandler.SLOT_INPUT, 44, 35));
+            this.addSlot(new SlotItemHandler(chestHandler, NayutaChestHandler.SLOT_OUTPUT, 116, 35));
+        });
     }
 
     @Override
     @NotNull
     public ItemStack quickMoveStack(@NotNull Player player, int i) {
-        Slot slot = this.getSlot(i);
-        ItemStack itemStack = slot.getItem();
-
-        if (itemStack.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-
-        ItemStack itemStackCopy = itemStack.copy();
-
-        boolean moveResult;
-        if (i < 36) {
-            // プレイヤーインベントリのアイテムをブロックエンティティに移動
-            moveResult = this.moveItemStackTo(itemStack, 36, this.slots.size(), false);
-        } else {
-            // ブロックエンティティのアイテムをプレイヤーインベントリに移動
-            moveResult = this.moveItemStackTo(itemStack, 0, 36, false);
-        }
-        if (!moveResult) return ItemStack.EMPTY;
-
-        slot.setChanged();
-        slot.onTake(player, itemStack);
-
-        return itemStackCopy;
+        return ItemStack.EMPTY;
     }
 
     @Override

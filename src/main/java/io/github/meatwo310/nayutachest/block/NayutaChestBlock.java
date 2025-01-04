@@ -5,15 +5,26 @@ import io.github.meatwo310.nayutachest.blockentity.ModBlockEntities;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
 import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class NayutaChestBlock extends Block implements EntityBlock {
     private final NayutaChestHandler inventory = new NayutaChestHandler();
@@ -46,5 +57,13 @@ public class NayutaChestBlock extends Block implements EntityBlock {
         }
     }
 
-
+    @SuppressWarnings("deprecation")
+    @ParametersAreNonnullByDefault
+    @Override
+    public @NotNull InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+            NetworkHooks.openScreen(serverPlayer, (MenuProvider) level.getBlockEntity(blockPos), blockPos);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
 }
