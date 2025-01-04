@@ -5,6 +5,7 @@ import io.github.meatwo310.nayutachest.blockentity.ModBlockEntities;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
 import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -16,6 +17,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
@@ -63,5 +66,15 @@ public class NayutaChestBlock extends Block implements EntityBlock {
             NetworkHooks.openScreen(serverPlayer, (MenuProvider) level.getBlockEntity(blockPos), blockPos);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Nullable
+    @ParametersAreNonnullByDefault
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide()) return null;
+        if (type != ModBlockEntities.NAYUTA_CHEST.get()) return null;
+        return (level1, blockPos, blockState, t) ->
+                NayutaChestBE.tick((ServerLevel) level1, blockPos, blockState, (NayutaChestBE) t);
     }
 }
