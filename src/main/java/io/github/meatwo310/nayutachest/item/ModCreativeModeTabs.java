@@ -1,7 +1,7 @@
 package io.github.meatwo310.nayutachest.item;
 
-import io.github.meatwo310.nayutachest.block.ModBlocks;
 import io.github.meatwo310.nayutachest.NayutaChest;
+import io.github.meatwo310.nayutachest.block.ModBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
