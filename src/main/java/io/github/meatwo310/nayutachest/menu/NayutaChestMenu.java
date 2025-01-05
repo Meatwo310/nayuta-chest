@@ -1,8 +1,9 @@
 package io.github.meatwo310.nayutachest.menu;
 
+import com.mojang.logging.LogUtils;
 import io.github.meatwo310.nayutachest.block.ModBlocks;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
-import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
+import io.github.meatwo310.nayutachest.handler.NayutaChestDisplayHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -11,8 +12,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 public class NayutaChestMenu extends AbstractContainerMenu {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     private final NayutaChestBE nayutaChestBlock;
     private final ContainerLevelAccess containerLevelAccess;
     public final ContainerData containerData;
@@ -67,12 +71,25 @@ public class NayutaChestMenu extends AbstractContainerMenu {
     }
 
     private void createBESlots(NayutaChestBE blockEntity) {
-        blockEntity.displayHandlerLazyOptional.ifPresent(displayHandler ->
-                this.addSlot(new SlotItemHandler(displayHandler, 0, 80, 35))
-        );
-        blockEntity.chestHandlerLazyOptional.ifPresent(chestHandler -> {
-            this.addSlot(new SlotItemHandler(chestHandler, NayutaChestHandler.SLOT_INPUT, 35, 35));
-            this.addSlot(new SlotItemHandler(chestHandler, NayutaChestHandler.SLOT_OUTPUT, 125, 35));
+//        blockEntity.displayHandlerLazyOptional.ifPresent(displayHandler ->
+//                this.addSlot(new SlotItemHandler(displayHandler, 0, 80, 35))
+//        );
+//        blockEntity.chestHandlerLazyOptional.ifPresent(chestHandler -> {
+//            this.addSlot(new SlotItemHandler(chestHandler, NayutaChestHandler.SLOT_INPUT, 35, 35));
+//            this.addSlot(new SlotItemHandler(chestHandler, NayutaChestHandler.SLOT_OUTPUT, 125, 35));
+//        });
+        blockEntity.displayHandlerLazyOptional.ifPresent(displayHandler -> {
+            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_INPUT, 35, 35));
+            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_OUTPUT, 125, 35));
+            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_DISPLAY, 80, 35));
+            LOGGER.debug("slots: {}", displayHandler.getSlots());
+            LOGGER.debug("stack[0]: {}", displayHandler.getStackInSlot(0));
+            LOGGER.debug("stack[1]: {}", displayHandler.getStackInSlot(1));
+            LOGGER.debug("stack[2]: {}", displayHandler.getStackInSlot(2));
+            nayutaChestBlock.chestHandlerLazyOptional.ifPresent(chestHandler -> {
+                LOGGER.debug("be stack[0]: {}", chestHandler.getStackInSlot(0));
+                LOGGER.debug("be stack[1]: {}", chestHandler.getStackInSlot(1));
+            });
         });
     }
 

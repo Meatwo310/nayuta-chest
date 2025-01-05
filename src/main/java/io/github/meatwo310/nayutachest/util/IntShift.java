@@ -16,26 +16,36 @@ public record IntShift(int base, int shift) {
      * @see IntShift
      */
     public IntShift {
-        if (base < 0) throw new IllegalArgumentException("Base must be non-negative");
-        if (shift < 0) throw new IllegalArgumentException("Shift must be non-negative");
+        if (base < 0) throw new IllegalArgumentException("Base must be non-negative, got " + base);
+        if (shift < 0) throw new IllegalArgumentException("Shift must be non-negative, got " + shift);
     }
 
     /**
      * Converts a BigInteger to an IntShift.
-     * At least the upper 31 bits are preserved.
-     * For larger values, the lower bits are discarded, resulting in a loss of precision.
+     * The upper 31 bits are preserved.
+     * @see IntShift#fromBigInteger(BigInteger, int)
+     */
+    public static IntShift fromBigInteger(BigInteger value) {
+        return fromBigInteger(value, Integer.SIZE - 1);
+    }
+
+    /**
+     * Converts a BigInteger to an IntShift.
+     * At least the upper {@code maxBits} bits are preserved.
+     * For larger values, the lower bits are discarded,
+     * resulting in a loss of precision.
      *
      * @param value BigInteger to convert
      * @return The IntShift representation
      * @throws IllegalArgumentException If the value is negative
      */
-    public static IntShift fromBigInteger(BigInteger value) {
+    public static IntShift fromBigInteger(BigInteger value, int maxBits) {
         if (value.signum() < 0) {
-            throw new IllegalArgumentException("Value must be non-negative");
+            throw new IllegalArgumentException("Value must be non-negative, got " + value);
         }
 
         int bits = value.bitLength();
-        int baseValueBits = Math.min(bits, Integer.SIZE - 1);
+        int baseValueBits = Math.min(bits, maxBits);
         int toShift = bits - baseValueBits;
         int base = value.shiftRight(toShift).intValueExact();
 

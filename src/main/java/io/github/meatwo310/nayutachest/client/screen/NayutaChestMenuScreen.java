@@ -1,5 +1,6 @@
 package io.github.meatwo310.nayutachest.client.screen;
 
+import com.mojang.logging.LogUtils;
 import io.github.meatwo310.nayutachest.NayutaChest;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
 import io.github.meatwo310.nayutachest.config.ClientConfig;
@@ -16,10 +17,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraftforge.client.extensions.IForgeGuiGraphics;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.math.BigInteger;
 
 public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMenu> {
+    public static final Logger LOGGER = LogUtils.getLogger();
+
     private static final ResourceLocation TEXTURE = new ResourceLocation(NayutaChest.MODID, "textures/gui/nayutachest_screen.png");
     private static final int FONT_COLOR = new IForgeGuiGraphics(){}.getColorFromFormattingCharacter('f', false);
     private static final boolean FONT_SHADOW = false;
@@ -47,6 +51,9 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
         super.render(guiGraphics, mouseX, mouseY, tick);
 
         ContainerData containerData = this.menu.containerData;
+        for (int i = 0; i < NayutaChestBE.NayutaChestContainerData.DATA_SIZE; i++) {
+            LOGGER.info("ContainerData[{}]: {}", i, containerData.get(i));
+        }
         int precision = ClientConfig.PRECISION.get();
 
         BigInteger inserted = new IntShift(

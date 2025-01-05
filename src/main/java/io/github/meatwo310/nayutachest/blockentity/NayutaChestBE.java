@@ -161,6 +161,13 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
+        LOGGER.debug("Opening NayutaChestMenu");
+        for (int i = 0; i < this.chestHandler.getSlots(); i++) {
+            LOGGER.debug("item[{}]: {}", i, this.chestHandler.getStackInSlot(i));
+        }
+        for (int i = 0; i < NayutaChestContainerData.DATA_SIZE; i++) {
+            LOGGER.debug("ContainerData[{}]: {}", i, this.data.get(i));
+        }
         return new NayutaChestMenu(containerId, playerInventory, this, data);
     }
 
@@ -200,11 +207,13 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
         }
 
         private static int getBase(BigInteger value) {
-            return IntShift.fromBigInteger(value).base();
+            // limit to 15 bits to prevent overflow in the client
+            return IntShift.fromBigInteger(value, Short.SIZE - 1).base();
         }
 
         private static int getShift(BigInteger value) {
-            return IntShift.fromBigInteger(value).shift();
+            // limit to 15 bits to prevent overflow in the client
+            return IntShift.fromBigInteger(value, Short.SIZE - 1).shift();
         }
 
         private static BigInteger getStackCountOr(LazyOptional<NayutaChestHandler> handlerLazyOptional, BigInteger defaultValue) {
