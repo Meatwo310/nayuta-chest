@@ -125,13 +125,13 @@ public class NayutaChestHandler extends ItemStackHandler {
     }
 
     @Override
-    protected int getStackLimit(int slot, @NotNull ItemStack stack) {
+    public int getSlotLimit(int slot) {
         return Integer.MAX_VALUE;
     }
 
     @Override
-    public int getSlotLimit(int slot) {
-        return Integer.MAX_VALUE;
+    protected int getStackLimit(int slot, @NotNull ItemStack stack) {
+        return this.getSlotLimit(slot);
     }
 
     @Override
