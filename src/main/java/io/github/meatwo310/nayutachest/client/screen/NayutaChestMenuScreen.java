@@ -51,9 +51,13 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
         super.render(guiGraphics, mouseX, mouseY, tick);
 
         ContainerData containerData = this.menu.containerData;
+
+        StringBuilder logMessage = new StringBuilder("ContainerData: ");
         for (int i = 0; i < NayutaChestBE.NayutaChestContainerData.DATA_SIZE; i++) {
-            LOGGER.info("ContainerData[{}]: {}", i, containerData.get(i));
+            logMessage.append("[%d]:%d, ".formatted(i, containerData.get(i)));
         }
+        LOGGER.info(logMessage.toString());
+
         int precision = ClientConfig.PRECISION.get();
 
         BigInteger inserted = new IntShift(

@@ -162,12 +162,19 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
     @Override
     public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
         LOGGER.debug("Opening NayutaChestMenu");
+
+        StringBuilder itemsLog = new StringBuilder("Items: ");
         for (int i = 0; i < this.chestHandler.getSlots(); i++) {
-            LOGGER.debug("item[{}]: {}", i, this.chestHandler.getStackInSlot(i));
+            itemsLog.append(String.format("item[%d]:%s, ", i, this.chestHandler.getStackInSlot(i)));
         }
+        LOGGER.debug(itemsLog.toString());
+
+        StringBuilder dataLog = new StringBuilder();
         for (int i = 0; i < NayutaChestContainerData.DATA_SIZE; i++) {
-            LOGGER.debug("ContainerData[{}]: {}", i, this.data.get(i));
+            dataLog.append(String.format("ContainerData[%d]:%d, ", i, this.data.get(i)));
         }
+        LOGGER.debug(dataLog.toString());
+
         return new NayutaChestMenu(containerId, playerInventory, this, data);
     }
 

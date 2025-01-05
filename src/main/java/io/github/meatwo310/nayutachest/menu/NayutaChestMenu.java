@@ -82,13 +82,19 @@ public class NayutaChestMenu extends AbstractContainerMenu {
             this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_INPUT, 35, 35));
             this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_OUTPUT, 125, 35));
             this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_DISPLAY, 80, 35));
-            LOGGER.debug("slots: {}", displayHandler.getSlots());
-            LOGGER.debug("stack[0]: {}", displayHandler.getStackInSlot(0));
-            LOGGER.debug("stack[1]: {}", displayHandler.getStackInSlot(1));
-            LOGGER.debug("stack[2]: {}", displayHandler.getStackInSlot(2));
+
+            StringBuilder stackLog = new StringBuilder();
+            for (int i = 0; i < displayHandler.getSlots(); i++) {
+                stackLog.append(String.format("stack[%d]:%s, ", i, displayHandler.getStackInSlot(i)));
+            }
+            LOGGER.debug(stackLog.toString());
+
             nayutaChestBlock.chestHandlerLazyOptional.ifPresent(chestHandler -> {
-                LOGGER.debug("be stack[0]: {}", chestHandler.getStackInSlot(0));
-                LOGGER.debug("be stack[1]: {}", chestHandler.getStackInSlot(1));
+                StringBuilder beStackLog = new StringBuilder();
+                for (int i = 0; i < chestHandler.getSlots(); i++) {
+                    beStackLog.append(String.format("beStack[%d]:%s, ", i, chestHandler.getStackInSlot(i)));
+                }
+                LOGGER.debug(beStackLog.toString());
             });
         });
     }
