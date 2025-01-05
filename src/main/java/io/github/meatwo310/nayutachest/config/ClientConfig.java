@@ -21,6 +21,7 @@ public class ClientConfig {
             .comment("""
                     The number of decimal places to display.
                     This only applies to SCIENTIFIC and SHORT.
+                    Note that the value may be inaccurate as it is truncated when sent by the server.
                     """
             )
             .defineInRange("precision", 3, 0, 10);

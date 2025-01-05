@@ -3,14 +3,12 @@ package io.github.meatwo310.nayutachest.menu;
 import com.mojang.logging.LogUtils;
 import io.github.meatwo310.nayutachest.block.ModBlocks;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
-import io.github.meatwo310.nayutachest.handler.NayutaChestDisplayHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -71,17 +69,10 @@ public class NayutaChestMenu extends AbstractContainerMenu {
     }
 
     private void createBESlots(NayutaChestBE blockEntity) {
-//        blockEntity.displayHandlerLazyOptional.ifPresent(displayHandler ->
-//                this.addSlot(new SlotItemHandler(displayHandler, 0, 80, 35))
-//        );
-//        blockEntity.chestHandlerLazyOptional.ifPresent(chestHandler -> {
-//            this.addSlot(new SlotItemHandler(chestHandler, NayutaChestHandler.SLOT_INPUT, 35, 35));
-//            this.addSlot(new SlotItemHandler(chestHandler, NayutaChestHandler.SLOT_OUTPUT, 125, 35));
-//        });
         blockEntity.displayHandlerLazyOptional.ifPresent(displayHandler -> {
-            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_INPUT, 35, 35));
-            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_OUTPUT, 125, 35));
-            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_DISPLAY, 80, 35));
+//            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_INPUT, 35, 35));
+//            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_OUTPUT, 125, 35));
+//            this.addSlot(new SlotItemHandler(displayHandler, NayutaChestDisplayHandler.SLOT_DISPLAY, 80, 35));
 
             StringBuilder stackLog = new StringBuilder();
             for (int i = 0; i < displayHandler.getSlots(); i++) {
