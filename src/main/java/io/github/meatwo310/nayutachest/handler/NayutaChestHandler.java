@@ -22,7 +22,11 @@ public class NayutaChestHandler extends ItemStackHandler {
     public NayutaChestHandler() {
         super(2);
     }
-    
+
+    public BigInteger getStackCount() {
+        return stackCount;
+    }
+
     public void setStackCount(BigInteger count) {
         if (this.stacks.isEmpty() || this.stacks.get(SLOT_OUTPUT).isEmpty()) return;
         this.getStackInSlot(SLOT_OUTPUT).setCount(BigIntegerUtil.asIntOr(count, FAKE_STACK_LIMIT));

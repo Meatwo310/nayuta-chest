@@ -5,6 +5,7 @@ import io.github.meatwo310.nayutachest.NayutaChest;
 import io.github.meatwo310.nayutachest.handler.NayutaChestDisplayHandler;
 import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import io.github.meatwo310.nayutachest.menu.NayutaChestMenu;
+import io.github.meatwo310.nayutachest.util.IntShift;
 import io.github.meatwo310.nayutachest.util.ItemStackHandlerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,6 +16,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -73,6 +75,10 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
 
     private BigInteger inserted = BigInteger.ZERO;
     private BigInteger extracted = BigInteger.ZERO;
+    private BigInteger insertedAvg = BigInteger.ZERO;
+    private BigInteger extractedAvg = BigInteger.ZERO;
+
+    private final ContainerData data = new NayutaChestContainerData();
 
     public NayutaChestBE(BlockPos blockPos, BlockState blockState) {
         super(ModBlockEntities.NAYUTA_CHEST.get(), blockPos, blockState);
@@ -87,14 +93,14 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
             return;
         }
 
-        BigInteger insertedAvg = nayutaChestBE.inserted.divide(BigInteger.valueOf(frequency));
-        BigInteger extractedAvg = nayutaChestBE.extracted.divide(BigInteger.valueOf(frequency));
+        nayutaChestBE.insertedAvg = nayutaChestBE.inserted.divide(BigInteger.valueOf(frequency));
+        nayutaChestBE.extractedAvg = nayutaChestBE.extracted.divide(BigInteger.valueOf(frequency));
 
         LOGGER.debug(
                 "NayutaChestBE at: {} | in: {} items/t | out: {} items/t | profiled {} ticks",
                 blockPos,
-                insertedAvg,
-                extractedAvg,
+                nayutaChestBE.insertedAvg,
+                nayutaChestBE.extractedAvg,
                 frequency
         );
 
@@ -155,11 +161,70 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
-        return new NayutaChestMenu(containerId, playerInventory, this);
+        return new NayutaChestMenu(containerId, playerInventory, this, data);
     }
 
     @Override
     public void saveToItem(@NotNull ItemStack p_187477_) {
         super.saveToItem(p_187477_);
+    }
+
+    public class NayutaChestContainerData implements ContainerData {
+        public static final int DATA_SIZE = 6;
+        public static final int INSERTED_AVG_BASE = 0;
+        public static final int INSERTED_AVG_SHIFT = 1;
+        public static final int EXTRACTED_AVG_BASE = 2;
+        public static final int EXTRACTED_AVG_SHIFT = 3;
+        public static final int ITEM_COUNT_BASE = 4;
+        public static final int ITEM_COUNT_SHIFT = 5;
+
+        private NayutaChestContainerData() {}
+
+        @Override
+        public int get(int i) {
+            return switch (i) {
+                case INSERTED_AVG_BASE -> getBase(NayutaChestBE.this.insertedAvg);
+                case INSERTED_AVG_SHIFT -> getShift(NayutaChestBE.this.insertedAvg);
+                case EXTRACTED_AVG_BASE -> getBase(NayutaChestBE.this.extractedAvg);
+                case EXTRACTED_AVG_SHIFT -> getShift(NayutaChestBE.this.extractedAvg);
+                case ITEM_COUNT_BASE -> getBase(getStackCountOr(
+                        NayutaChestBE.this.chestHandlerLazyOptional,
+                        BigInteger.ZERO
+                ));
+                case ITEM_COUNT_SHIFT -> getShift(getStackCountOr(
+                        NayutaChestBE.this.chestHandlerLazyOptional,
+                        BigInteger.ZERO
+                ));
+                default -> 0;
+            };
+        }
+
+        private static int getBase(BigInteger value) {
+            return IntShift.fromBigInteger(value).base();
+        }
+
+        private static int getShift(BigInteger value) {
+            return IntShift.fromBigInteger(value).shift();
+        }
+
+        private static BigInteger getStackCountOr(LazyOptional<NayutaChestHandler> handlerLazyOptional, BigInteger defaultValue) {
+            if (handlerLazyOptional.isPresent()) {
+                return handlerLazyOptional
+                        .orElseThrow(() -> new IllegalStateException("Chest handler is not present"))
+                        .getStackCount();
+            } else {
+                return defaultValue;
+            }
+        }
+
+        @Override
+        public void set(int i, int value) {
+            LOGGER.warn("Setting data value {} to {} is not supported, ignoring", i, value);
+        }
+
+        @Override
+        public int getCount() {
+            return DATA_SIZE;
+        }
     }
 }
