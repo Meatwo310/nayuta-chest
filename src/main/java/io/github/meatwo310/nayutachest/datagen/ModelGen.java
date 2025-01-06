@@ -6,7 +6,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.BlockModelProvider;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
@@ -14,16 +14,18 @@ import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ModelGen {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final List<RegistryObject<Item>> basicItems = new ArrayList<>();
     private static final List<RegistryObject<Block>> basicBlocks = new ArrayList<>();
+    private static final List<RegistryObject<Block>> horizontalDirectionalBlocks = new ArrayList<>();
 
     protected static void register(boolean run, DataGenerator generator, PackOutput packOutput, ExistingFileHelper efh) {
         generator.addProvider(run, new ItemModel(packOutput, NayutaChest.MODID, efh));
-        generator.addProvider(run, new BlockModel(packOutput, NayutaChest.MODID, efh));
+        generator.addProvider(run, new BlockState(packOutput, NayutaChest.MODID, efh));
     }
 
     public static void addBasicItem(RegistryObject<Item> item) {
@@ -34,6 +36,19 @@ public class ModelGen {
         basicBlocks.add(block);
     }
 
+    public static void addHorizontalDirectionalBlock(RegistryObject<Block> block) {
+        horizontalDirectionalBlocks.add(block);
+    }
+
+    private static <T> void handleModelGeneration(RegistryObject<T> registryObject, Consumer<RegistryObject<T>> consumer, String errorMessage) {
+        try {
+            consumer.accept(registryObject);
+        } catch (Exception e) {
+            LOGGER.error("Failed to generate model for {}: {}", errorMessage, registryObject.getId().getPath());
+            LOGGER.error(e.getMessage());
+        }
+    }
+
     private static class ItemModel extends ItemModelProvider {
         public ItemModel(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
             super(output, modid, existingFileHelper);
@@ -41,32 +56,35 @@ public class ModelGen {
 
         @Override
         protected void registerModels() {
-            basicItems.forEach(item -> {
-                try {
-                    this.basicItem(item.get());
-                } catch (Exception e) {
-                    LOGGER.error("Failed to generate item model for: {}", item.getId().getPath());
-                    LOGGER.error(e.getMessage());
-                }
-            });
-            basicBlocks.forEach(block -> {
-                try {
-                    this.withExistingParent(block.getId().getPath(), modLoc("block/" + block.getId().getPath()));
-                } catch (Exception e) {
-                    LOGGER.error("Failed to generate item model for block: {}", block.getId().getPath());
-                    LOGGER.error(e.getMessage());
-                }
-            });
+            basicItems.forEach(item -> handleModelGeneration(item, i -> this.basicItem(
+                    i.get()
+            ), "item"));
+            basicBlocks.forEach(block -> handleModelGeneration(block, b -> this.withExistingParent(
+                    b.getId().getPath(),
+                    modLoc("block/" + b.getId().getPath())
+            ), "block"));
+            horizontalDirectionalBlocks.forEach(block -> handleModelGeneration(block, b -> this.withExistingParent(
+                    b.getId().getPath(),
+                    modLoc("block/" + b.getId().getPath())
+            ), "horizontal directional block"));
         }
     }
 
-    private static class BlockModel extends BlockModelProvider {
-        public BlockModel(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
+    private static class BlockState extends BlockStateProvider {
+        public BlockState(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
             super(output, modid, existingFileHelper);
         }
 
         @Override
-        protected void registerModels() {
+        protected void registerStatesAndModels() {
+            basicBlocks.forEach(block -> handleModelGeneration(block, b -> this.simpleBlock(
+                    b.get(),
+                    this.models().getExistingFile(modLoc("block/" + b.getId().getPath()))
+            ), "block"));
+            horizontalDirectionalBlocks.forEach(block -> handleModelGeneration(block, b -> this.horizontalBlock(
+                    b.get(),
+                    this.models().getExistingFile(modLoc("block/" + b.getId().getPath()))
+            ), "horizontal directional block"));
         }
     }
 }

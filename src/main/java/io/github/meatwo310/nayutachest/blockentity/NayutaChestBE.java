@@ -2,6 +2,7 @@ package io.github.meatwo310.nayutachest.blockentity;
 
 import com.mojang.logging.LogUtils;
 import io.github.meatwo310.nayutachest.NayutaChest;
+import io.github.meatwo310.nayutachest.block.NayutaChestBlock;
 import io.github.meatwo310.nayutachest.handler.NayutaChestDisplayHandler;
 import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import io.github.meatwo310.nayutachest.menu.NayutaChestMenu;
@@ -197,6 +198,10 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
     @Override
     public void saveToItem(@NotNull ItemStack p_187477_) {
         super.saveToItem(p_187477_);
+    }
+
+    public Direction getDirection() {
+        return this.getBlockState().getValue(NayutaChestBlock.FACING);
     }
 
     public class NayutaChestContainerData implements ContainerData {

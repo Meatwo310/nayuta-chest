@@ -16,6 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ModBlocks {
@@ -26,18 +27,19 @@ public class ModBlocks {
     public static final RegistryObject<Block> NAYUTA_CHEST = add(
             "nayutachest",
             () -> new NayutaChestBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BLACK)
+                    .mapColor(MapColor.DIAMOND)
                     .strength(3.0F, 1200.0F)
-                    .sound(SoundType.WOOD)
+                    .sound(SoundType.METAL)
             ),
-            () -> new BlockItem(ModBlocks.NAYUTA_CHEST.get(), new BlockItem.Properties())
+            () -> new BlockItem(ModBlocks.NAYUTA_CHEST.get(), new BlockItem.Properties()),
+            ModelGen::addHorizontalDirectionalBlock
     );
 
-    private static RegistryObject<Block> add(String name, Supplier<Block> blockSupplier, Supplier<BlockItem> blockItemSupplier) {
+    private static RegistryObject<Block> add(String name, Supplier<Block> blockSupplier, Supplier<BlockItem> blockItemSupplier, Consumer<RegistryObject<Block>> modelGenMethod) {
         RegistryObject<Block> block = BLOCKS.register(name, blockSupplier);
         BLOCKS_MAP.put(name, block);
         ModItems.addBlockItem(name, blockItemSupplier);
-        ModelGen.addBasicBlock(block);
+        modelGenMethod.accept(block);
         TagGen.addMineableWithPickaxeBlock(block);
         return block;
     }

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "nayutachest:block/nayutachest",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "nayutachest:block/nayutachest"
+    },
+    "facing=south": {
+      "model": "nayutachest:block/nayutachest",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nayutachest:block/nayutachest",
+      "y": 270
+    }
+  }
+}
