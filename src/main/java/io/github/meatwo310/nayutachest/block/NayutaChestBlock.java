@@ -5,6 +5,7 @@ import io.github.meatwo310.nayutachest.blockentity.ModBlockEntities;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
 import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 
 public class NayutaChestBlock extends Block implements EntityBlock {
     private final NayutaChestHandler inventory = new NayutaChestHandler();
@@ -62,6 +64,15 @@ public class NayutaChestBlock extends Block implements EntityBlock {
     @ParametersAreNonnullByDefault
     @Override
     public @NotNull InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        if (player.isShiftKeyDown()) {
+            player.sendSystemMessage(Component.literal("[%s] %d".formatted(
+                    level.isClientSide ? "Client" : "Server",
+                    ((NayutaChestBE) Objects.requireNonNull(level.getBlockEntity(blockPos))).chestHandlerLazyOptional
+                            .orElseThrow(IllegalStateException::new)
+                            .getStackCount()
+            )));
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             NetworkHooks.openScreen(serverPlayer, (MenuProvider) level.getBlockEntity(blockPos), blockPos);
         }

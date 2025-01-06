@@ -1,5 +1,6 @@
 package io.github.meatwo310.nayutachest.handler;
 
+import com.mojang.logging.LogUtils;
 import io.github.meatwo310.nayutachest.util.BigIntegerUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -7,10 +8,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.math.BigInteger;
 
 public class NayutaChestHandler extends ItemStackHandler {
+    public static final Logger LOGGER = LogUtils.getLogger();
+
     public static final BigInteger STACK_LIMIT = BigInteger.valueOf(10).pow(60);
     public static final int FAKE_STACK_LIMIT = Integer.MAX_VALUE;
 
@@ -29,8 +33,12 @@ public class NayutaChestHandler extends ItemStackHandler {
 
     public void setStackCount(BigInteger count) {
         if (this.stacks.isEmpty() || this.stacks.get(SLOT_OUTPUT).isEmpty()) return;
-        this.getStackInSlot(SLOT_OUTPUT).setCount(BigIntegerUtil.asIntOr(count, FAKE_STACK_LIMIT));
-        this.stackCount = count;
+        if (count.compareTo(BigInteger.ZERO) <= 0) {
+            this.setStack(ItemStack.EMPTY, BigInteger.ZERO);
+        } else {
+            this.getStackInSlot(SLOT_OUTPUT).setCount(BigIntegerUtil.asIntOr(count, FAKE_STACK_LIMIT));
+            this.stackCount = count;
+        }
     }
 
     public void setStack(ItemStack stack, BigInteger count) {
@@ -53,6 +61,16 @@ public class NayutaChestHandler extends ItemStackHandler {
                 this.stacks.get(slot).getItem(),
                 BigIntegerUtil.asIntOr(this.stackCount, FAKE_STACK_LIMIT)
         );
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        this.validateSlotIndex(slot);
+        ItemStack result = this.insertItem(slot, stack, false);
+        if (!result.isEmpty()) {
+            LOGGER.error("Failed to insert stack {} into slot {}. Remaining stack: {}", stack, slot, result);
+        }
+        this.onContentsChanged(SLOT_OUTPUT);
     }
 
     @Override
@@ -109,7 +127,7 @@ public class NayutaChestHandler extends ItemStackHandler {
         int toExtract = Math.min(amount, BigIntegerUtil.asIntOr(this.stackCount, FAKE_STACK_LIMIT));
 
         // the slot has enough items to extract
-        if (this.stackCount.compareTo(BigInteger.valueOf(toExtract)) > 0) {
+        if (this.stackCount.compareTo(BigInteger.valueOf(toExtract)) >= 0) {
             if (!simulate) {
                 this.setStackCount(stackCount.subtract(BigInteger.valueOf(toExtract)));
                 this.onContentsChanged(SLOT_OUTPUT);
@@ -136,6 +154,9 @@ public class NayutaChestHandler extends ItemStackHandler {
 
     @Override
     public CompoundTag serializeNBT() {
+        if (this.stacks.isEmpty() || this.stacks.get(SLOT_OUTPUT).isEmpty())
+            return new CompoundTag();
+
         CompoundTag itemTag = new CompoundTag();
         this.stacks.get(SLOT_OUTPUT).save(itemTag);
         itemTag.putByte("Count", (byte) 1);

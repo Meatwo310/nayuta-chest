@@ -11,6 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -97,11 +100,11 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
         nayutaChestBE.extractedAvg = nayutaChestBE.extracted.divide(BigInteger.valueOf(frequency));
 
         LOGGER.debug(
-                "NayutaChestBE at: {} | in: {} items/t | out: {} items/t | profiled {} ticks",
+                "NayutaChestBE at: {} | profiled {} ticks | in: {} items/t | out: {} items/t",
                 blockPos,
+                frequency,
                 nayutaChestBE.insertedAvg,
-                nayutaChestBE.extractedAvg,
-                frequency
+                nayutaChestBE.extractedAvg
         );
 
         nayutaChestBE.inserted = BigInteger.ZERO;
@@ -118,7 +121,6 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
     public void load(@NotNull CompoundTag nbt) {
         super.load(nbt);
         CompoundTag data = nbt.getCompound(NayutaChest.MODID);
-        LogUtils.getLogger().warn("Loading NayutaChestBE: {}", data);
         ItemStackHandlerUtil.load(data, "handler", this.chestHandlerLazyOptional);
         this.displayHandler.setHandler(this.chestHandler);
     }
@@ -126,15 +128,29 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
     @Override
     protected void saveAdditional(@NotNull CompoundTag nbt) {
         super.saveAdditional(nbt);
+        if (ItemStackHandlerUtil.isEmpty(this.chestHandlerLazyOptional)) return;
         CompoundTag data = new CompoundTag();
         ItemStackHandlerUtil.saveAdditional(data, "handler", this.chestHandlerLazyOptional);
         nbt.put(NayutaChest.MODID, data);
     }
 
     @Override
+    public @NotNull CompoundTag getUpdateTag() {
+        CompoundTag nbt = super.getUpdateTag();
+        this.saveAdditional(nbt);
+        return nbt;
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
     public void setChanged() {
         super.setChanged();
-        if (this.level == null || !this.level.isClientSide()) return;
+        if (this.level == null || this.level.isClientSide()) return;
         this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
 

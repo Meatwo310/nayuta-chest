@@ -52,11 +52,11 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
 
         ContainerData containerData = this.menu.containerData;
 
-        StringBuilder logMessage = new StringBuilder("ContainerData: ");
-        for (int i = 0; i < NayutaChestBE.NayutaChestContainerData.DATA_SIZE; i++) {
-            logMessage.append("[%d]:%d, ".formatted(i, containerData.get(i)));
-        }
-        LOGGER.info(logMessage.toString());
+//        StringBuilder logMessage = new StringBuilder("ContainerData: ");
+//        for (int i = 0; i < NayutaChestBE.NayutaChestContainerData.DATA_SIZE; i++) {
+//            logMessage.append("[%d]:%d, ".formatted(i, containerData.get(i)));
+//        }
+//        LOGGER.info(logMessage.toString());
 
         int precision = ClientConfig.PRECISION.get();
 

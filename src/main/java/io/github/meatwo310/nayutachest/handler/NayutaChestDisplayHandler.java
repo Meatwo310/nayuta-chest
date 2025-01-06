@@ -1,11 +1,15 @@
 package io.github.meatwo310.nayutachest.handler;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 public class NayutaChestDisplayHandler extends ItemStackHandler {
+    public static final Logger LOGGER = LogUtils.getLogger();
+
     private NayutaChestHandler nayutaChestHandler;
 
     public static final int SLOT_INPUT = 0;
@@ -39,21 +43,35 @@ public class NayutaChestDisplayHandler extends ItemStackHandler {
     }
 
     @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        if (slot != SLOT_INPUT) {
+            LOGGER.warn("cannot set stack in slot {}", slot);
+            return;
+        }
+        this.nayutaChestHandler.setStackInSlot(NayutaChestHandler.SLOT_INPUT, stack);
+        this.onContentsChanged(slot);
+    }
+
+    @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        // no slot validation needed since NayutaChestHandler will handle it
-        if (slot == SLOT_DISPLAY) {
+        if (slot != SLOT_INPUT) {
+            LOGGER.warn("cannot insert into slot {}", slot);
             return stack;
         }
-        return this.nayutaChestHandler.insertItem(NayutaChestHandler.SLOT_INPUT, stack, simulate);
+        ItemStack result = this.nayutaChestHandler.insertItem(NayutaChestHandler.SLOT_INPUT, stack, simulate);
+        LOGGER.debug("insertItem: slot={}, stack={}, simulate={}, result={}", slot, stack, simulate, result);
+        return result;
     }
 
     @Override
     public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-        // no slot validation needed since NayutaChestHandler will handle it
-        if (slot == SLOT_DISPLAY) {
+        if (slot != SLOT_OUTPUT) {
+            LOGGER.debug("cannot extract from slot {}", slot);
             return ItemStack.EMPTY;
         }
-        return this.nayutaChestHandler.extractItem(NayutaChestHandler.SLOT_OUTPUT, amount, simulate);
+        ItemStack result = this.nayutaChestHandler.extractItem(NayutaChestHandler.SLOT_OUTPUT, amount, simulate);
+        LOGGER.debug("extractItem: slot={}, amount={}, simulate={}, result={}", slot, amount, simulate, result);
+        return result;
     }
 
     @Override
