@@ -45,7 +45,7 @@ public class NayutaChestDisplayHandler extends ItemStackHandler {
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (slot != SLOT_INPUT) {
-            LOGGER.warn("cannot set stack in slot {}", slot);
+            LOGGER.warn("cannot set stack {} in slot {}", stack, slot);
             return;
         }
         this.nayutaChestHandler.setStackInSlot(NayutaChestHandler.SLOT_INPUT, stack);
@@ -55,7 +55,7 @@ public class NayutaChestDisplayHandler extends ItemStackHandler {
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (slot != SLOT_INPUT) {
-            LOGGER.warn("cannot insert into slot {}", slot);
+            LOGGER.warn("cannot insert item {} into slot {}", stack, slot);
             return stack;
         }
         ItemStack result = this.nayutaChestHandler.insertItem(NayutaChestHandler.SLOT_INPUT, stack, simulate);
@@ -66,7 +66,7 @@ public class NayutaChestDisplayHandler extends ItemStackHandler {
     @Override
     public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (slot != SLOT_OUTPUT) {
-            LOGGER.debug("cannot extract from slot {}", slot);
+            LOGGER.warn("cannot extract {} items from slot {}", amount, slot);
             return ItemStack.EMPTY;
         }
         ItemStack result = this.nayutaChestHandler.extractItem(NayutaChestHandler.SLOT_OUTPUT, amount, simulate);
