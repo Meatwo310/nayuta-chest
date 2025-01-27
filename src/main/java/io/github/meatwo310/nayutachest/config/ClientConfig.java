@@ -11,8 +11,7 @@ public class ClientConfig {
                     KANSUJI: 一, 一千, 一万, 百二十三穣, 一那由多
                     NUMERIC_KANSUJI: 1, 1千, 1万, 123穣, 1那由多
                     SCIENTIFIC: 1, 1.00E3, 1.00E6, 1.23E30, 1.00E60
-                    SHORT: 1, 1k, 1M, 1.23No, 1.00Nd
-                    """
+                    SHORT: 1, 1k, 1M, 1.23No, 1.00Nd"""
             )
 //            .defineEnum("numberType", NumberTypeEnum.KANSUJI);
             .defineEnum("numberType", NumberTypeEnum.SCIENTIFIC);
@@ -21,8 +20,7 @@ public class ClientConfig {
             .comment("""
                     The number of decimal places to display.
                     This only applies to SCIENTIFIC and SHORT.
-                    Note that the value may be inaccurate as it is truncated when sent by the server.
-                    """
+                    Note that the value may be inaccurate as it is truncated when sent by the server."""
             )
             .defineInRange("precision", 3, 0, 10);
 
