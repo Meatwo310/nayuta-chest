@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class NayutaChestMenu extends AbstractContainerMenu {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private final NayutaChestBE nayutaChestBlock;
+    public final NayutaChestBE nayutaChestBlock;
     private final ContainerLevelAccess containerLevelAccess;
     public final ContainerData containerData;
     //    private final ContainerData containerData;

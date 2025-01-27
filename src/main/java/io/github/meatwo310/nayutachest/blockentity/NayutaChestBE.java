@@ -205,13 +205,11 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
     }
 
     public class NayutaChestContainerData implements ContainerData {
-        public static final int DATA_SIZE = 6;
+        public static final int DATA_SIZE = 4;
         public static final int INSERTED_AVG_BASE = 0;
         public static final int INSERTED_AVG_SHIFT = 1;
         public static final int EXTRACTED_AVG_BASE = 2;
         public static final int EXTRACTED_AVG_SHIFT = 3;
-        public static final int ITEM_COUNT_BASE = 4;
-        public static final int ITEM_COUNT_SHIFT = 5;
 
         private NayutaChestContainerData() {}
 
@@ -222,14 +220,6 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
                 case INSERTED_AVG_SHIFT -> getShift(NayutaChestBE.this.insertedAvg);
                 case EXTRACTED_AVG_BASE -> getBase(NayutaChestBE.this.extractedAvg);
                 case EXTRACTED_AVG_SHIFT -> getShift(NayutaChestBE.this.extractedAvg);
-                case ITEM_COUNT_BASE -> getBase(getStackCountOr(
-                        NayutaChestBE.this.chestHandlerLazyOptional,
-                        BigInteger.ZERO
-                ));
-                case ITEM_COUNT_SHIFT -> getShift(getStackCountOr(
-                        NayutaChestBE.this.chestHandlerLazyOptional,
-                        BigInteger.ZERO
-                ));
                 default -> 0;
             };
         }
@@ -242,16 +232,6 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
         private static int getShift(BigInteger value) {
             // limit to 15 bits to prevent overflow in the client
             return IntShift.fromBigInteger(value, Short.SIZE - 1).shift();
-        }
-
-        private static BigInteger getStackCountOr(LazyOptional<NayutaChestHandler> handlerLazyOptional, BigInteger defaultValue) {
-            if (handlerLazyOptional.isPresent()) {
-                return handlerLazyOptional
-                        .orElseThrow(() -> new IllegalStateException("Chest handler is not present"))
-                        .getStackCount();
-            } else {
-                return defaultValue;
-            }
         }
 
         @Override

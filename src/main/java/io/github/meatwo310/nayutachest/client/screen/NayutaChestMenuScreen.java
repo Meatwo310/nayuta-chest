@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import io.github.meatwo310.nayutachest.NayutaChest;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
 import io.github.meatwo310.nayutachest.config.ClientConfig;
+import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import io.github.meatwo310.nayutachest.menu.NayutaChestMenu;
 import io.github.meatwo310.nayutachest.util.BigIntegerUtil;
 import io.github.meatwo310.nayutachest.util.IntShift;
@@ -16,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraftforge.client.extensions.IForgeGuiGraphics;
+import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -72,11 +74,14 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
         ).toBigInteger();
         String extractedString = BigIntegerUtil.toScientificNotation(extracted, precision) + "/t";
 
-        BigInteger itemCount = new IntShift(
-                containerData.get(NayutaChestBE.NayutaChestContainerData.ITEM_COUNT_BASE),
-                containerData.get(NayutaChestBE.NayutaChestContainerData.ITEM_COUNT_SHIFT)
-        ).toBigInteger();
-        String itemCountString = BigIntegerUtil.toScientificNotation(itemCount, precision);
+        String itemCountString;
+        LazyOptional<NayutaChestHandler> handlerLazyOptional = this.menu.nayutaChestBlock.chestHandlerLazyOptional;
+        if (handlerLazyOptional.isPresent()) {
+            NayutaChestHandler handler = handlerLazyOptional.orElseThrow(() -> new IllegalStateException("NayutaChestHandler is not present"));
+            itemCountString = BigIntegerUtil.toScientificNotation(handler.getStackCount(), precision);
+        } else {
+            itemCountString = "ERROR";
+        }
 
         Font font = Minecraft.getInstance().font;
         int insertedX = 43 + this.leftPos - font.width(insertedString) / 2;
