@@ -5,6 +5,7 @@ import io.github.meatwo310.nayutachest.block.ModBlocks;
 import io.github.meatwo310.nayutachest.blockentity.ModBlockEntities;
 import io.github.meatwo310.nayutachest.config.ClientConfig;
 import io.github.meatwo310.nayutachest.config.CommonConfig;
+import io.github.meatwo310.nayutachest.config.ServerConfig;
 import io.github.meatwo310.nayutachest.item.ModCreativeModeTabs;
 import io.github.meatwo310.nayutachest.item.ModItems;
 import io.github.meatwo310.nayutachest.menu.ModMenus;
@@ -32,5 +33,6 @@ public class NayutaChest {
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
     }
 }

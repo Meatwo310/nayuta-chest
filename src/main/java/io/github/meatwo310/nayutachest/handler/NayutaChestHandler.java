@@ -1,6 +1,7 @@
 package io.github.meatwo310.nayutachest.handler;
 
 import com.mojang.logging.LogUtils;
+import io.github.meatwo310.nayutachest.config.ServerConfig;
 import io.github.meatwo310.nayutachest.util.BigIntegerUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +16,6 @@ import java.math.BigInteger;
 public class NayutaChestHandler extends ItemStackHandler {
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final BigInteger STACK_LIMIT = BigInteger.valueOf(10).pow(60);
     public static final int FAKE_STACK_LIMIT = Integer.MAX_VALUE;
 
     public static final int SLOT_INPUT = 0;
@@ -87,10 +87,10 @@ public class NayutaChestHandler extends ItemStackHandler {
         ItemStack existingStack = this.stacks.get(SLOT_OUTPUT);
         BigInteger remainingSpace;
         if (existingStack.isEmpty()) {
-            remainingSpace = STACK_LIMIT;
+            remainingSpace = ServerConfig.storageSizeCache;
         } else {
             if (!ItemHandlerHelper.canItemStacksStack(stack, existingStack)) return stack;
-            remainingSpace = STACK_LIMIT.subtract(stackCount);
+            remainingSpace = ServerConfig.storageSizeCache.subtract(stackCount);
         }
 
         // this handler is already full
@@ -101,7 +101,7 @@ public class NayutaChestHandler extends ItemStackHandler {
         if (!simulate) {
             // set the stack or update the stack count in the slot
             if (existingStack.isEmpty()) {
-                this.setStack(stack, willReachLimit ? STACK_LIMIT : BigInteger.valueOf(stack.getCount()));
+                this.setStack(stack, willReachLimit ? ServerConfig.storageSizeCache : BigInteger.valueOf(stack.getCount()));
             } else {
                 this.setStackCount(willReachLimit ? remainingSpace : this.stackCount.add(BigInteger.valueOf(stack.getCount())));
             }
