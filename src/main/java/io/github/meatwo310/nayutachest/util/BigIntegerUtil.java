@@ -1,8 +1,6 @@
 package io.github.meatwo310.nayutachest.util;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 
 public class BigIntegerUtil {
     /**
@@ -28,22 +26,4 @@ public class BigIntegerUtil {
             return max;
         }
     }
-
-
-    /**
-     * Converts a BigInteger to a scientific notation string with the specified precision.
-     * @param value The BigInteger value to convert
-     * @param precision The number of significant digits to include in the result
-     * @return The scientific notation string
-     */
-    public static String toScientificNotation(BigInteger value, int precision) {
-        BigDecimal bigDecimal = new BigDecimal(value);
-        BigDecimal scaled = bigDecimal.setScale(precision - bigDecimal.precision() + bigDecimal.scale(), RoundingMode.FLOOR);
-        return scaled
-                .toString()
-                .replaceFirst("\\.0+$", "")
-                .replaceFirst("^0E-.+$", "0");
-    }
-
-
 }

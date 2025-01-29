@@ -6,8 +6,8 @@ import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
 import io.github.meatwo310.nayutachest.config.ClientConfig;
 import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import io.github.meatwo310.nayutachest.menu.NayutaChestMenu;
-import io.github.meatwo310.nayutachest.util.BigIntegerUtil;
 import io.github.meatwo310.nayutachest.util.IntShift;
+import io.github.meatwo310.nayutachest.util.NumberFormatter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -66,19 +66,19 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
                 containerData.get(NayutaChestBE.NayutaChestContainerData.INSERTED_AVG_BASE),
                 containerData.get(NayutaChestBE.NayutaChestContainerData.INSERTED_AVG_SHIFT)
         ).toBigInteger();
-        String insertedString = BigIntegerUtil.toScientificNotation(inserted, precision) + "/t";
+        String insertedString = new NumberFormatter(inserted).to(ClientConfig.NUMBER_FORMAT.get(), precision) + " /t";
 
         BigInteger extracted = new IntShift(
                 containerData.get(NayutaChestBE.NayutaChestContainerData.EXTRACTED_AVG_BASE),
                 containerData.get(NayutaChestBE.NayutaChestContainerData.EXTRACTED_AVG_SHIFT)
         ).toBigInteger();
-        String extractedString = BigIntegerUtil.toScientificNotation(extracted, precision) + "/t";
+        String extractedString = new NumberFormatter(extracted).to(ClientConfig.NUMBER_FORMAT.get(), precision) + " /t";
 
         String itemCountString;
         LazyOptional<NayutaChestHandler> handlerLazyOptional = this.menu.nayutaChestBlock.chestHandlerLazyOptional;
         if (handlerLazyOptional.isPresent()) {
             NayutaChestHandler handler = handlerLazyOptional.orElseThrow(() -> new IllegalStateException("NayutaChestHandler is not present"));
-            itemCountString = BigIntegerUtil.toScientificNotation(handler.getStackCount(), precision);
+            itemCountString = new NumberFormatter(handler.getStackCount()).to(ClientConfig.NUMBER_FORMAT.get(), precision);
         } else {
             itemCountString = "ERROR";
         }

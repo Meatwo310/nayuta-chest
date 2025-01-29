@@ -1,35 +1,26 @@
 package io.github.meatwo310.nayutachest.config;
 
+import io.github.meatwo310.nayutachest.util.NumberFormatter;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ClientConfig {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-    public static final ForgeConfigSpec.EnumValue<NumberTypeEnum> NUMBER_TYPE = BUILDER
+    public static final ForgeConfigSpec.EnumValue<NumberFormatter.Format> NUMBER_FORMAT = BUILDER
             .comment("""
-                    The type of number to display.
-                    KANSUJI: 一, 一千, 一万, 百二十三穣, 一那由多
-                    NUMERIC_KANSUJI: 1, 1千, 1万, 123穣, 1那由多
-                    SCIENTIFIC: 1, 1.00E3, 1.00E6, 1.23E30, 1.00E60
-                    SHORT: 1, 1k, 1M, 1.23No, 1.00Nd"""
+                    The format of number to display."""
             )
-//            .defineEnum("numberType", NumberTypeEnum.KANSUJI);
-            .defineEnum("numberType", NumberTypeEnum.SCIENTIFIC);
+//            .defineEnum("numberType", FormatTypeEnum.KANSUJI);
+            .defineEnum("numberFormat", NumberFormatter.Format.SCIENTIFIC);
 
     public static final ForgeConfigSpec.IntValue PRECISION = BUILDER
             .comment("""
                     The number of decimal places to display.
-                    This only applies to SCIENTIFIC and SHORT.
+                    The behavior will slightly vary depending on the numberFormat.
+                    Increasing the value provides more detail at the cost of readability.
                     Note that the value may be inaccurate as it is truncated when sent by the server."""
             )
             .defineInRange("precision", 3, 0, 10);
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
-
-    public enum NumberTypeEnum {
-        KANSUJI,
-        NUMERIC_KANSUJI,
-        SCIENTIFIC,
-        SHORT,
-    }
 }
