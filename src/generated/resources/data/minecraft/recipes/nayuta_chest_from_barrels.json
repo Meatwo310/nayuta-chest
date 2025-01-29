@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "forge:barrels/wooden"
+    },
+    "D": {
+      "tag": "forge:storage_blocks/diamond"
+    },
+    "G": {
+      "tag": "forge:glass_panes"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "GBG",
+    "GDG"
+  ],
+  "result": {
+    "item": "nayutachest:nayutachest"
+  },
+  "show_notification": true
+}

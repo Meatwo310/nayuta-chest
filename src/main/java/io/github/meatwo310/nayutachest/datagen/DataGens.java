@@ -28,6 +28,6 @@ public class DataGens {
 
         TagGen.register(includeServer, generator, output, lookupProvider, efh);
 //        LootTableGen.register(includeServer, generator, output);
-//        RecipeGen.register(includeServer, generator, output);
+        RecipeGen.register(includeServer, generator, output);
     }
 }
