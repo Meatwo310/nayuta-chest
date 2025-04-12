@@ -65,6 +65,57 @@ public class NumberFormatter {
             "Uv",
     };
 
+    // metric units
+    public static final int METRIC_UNITS_INTERVAL = 3;
+    public static final String[] METRIC_UNITS = {
+            "",
+            "k",
+            "M",
+            "G",
+            "T",
+            "P",
+            "E",
+            "Z",
+            "Y",
+            "R",
+            "Q",
+            "kQ", // double prefixes isn't allowed in SI actually
+            "MQ",
+            "GQ",
+            "TQ",
+            "PQ",
+            "EQ",
+            "ZQ",
+            "YQ",
+            "RQ",
+            "QQ",
+    };
+
+    // kansuji units
+    public static final int KANSUJI_UNITS_INTERVAL = 4;
+    public static final String[] KANSUJI_UNITS = {
+            "",
+            "万",
+            "億",
+            "兆",
+            "京",
+            "垓",
+            "𥝱",
+            "穣",
+            "溝",
+            "澗",
+            "正",
+            "載",
+            "極",
+            "恒河沙",
+            "阿僧祇",
+            "那由多",
+    };
+
+    // numeric kansuji units
+    public static final int NUMERIC_KANSUJI_UNITS_INTERVAL = KANSUJI_UNITS_INTERVAL;
+    public static final String[] NUMERIC_KANSUJI_UNITS = KANSUJI_UNITS;
+
     // constructor
     public NumberFormatter(BigInteger value) {
         this.value = value;
@@ -96,15 +147,17 @@ public class NumberFormatter {
     }
 
     public String toKansuji(int precision) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return "Not implemented yet";
     }
 
     public String toNumericKansuji(int precision) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return "Not implemented yet";
     }
 
     public String toMetric(int precision) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return this.format(this.value, METRIC_UNITS, METRIC_UNITS_INTERVAL, precision, (bigDecimal, unitValue) ->
+                trimMoreZeros(bigDecimal) + " "
+        );
     }
 
     public String toShortScale(int precision) {
