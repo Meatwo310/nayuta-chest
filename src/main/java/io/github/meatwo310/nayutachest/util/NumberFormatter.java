@@ -182,14 +182,14 @@ public class NumberFormatter {
         return this.toScientificNotation(precision);
     }
 
-    private static String trimZeros(BigDecimal value) {
+    public static String trimZeros(BigDecimal value) {
         return value
                 .toString()
                 .replaceFirst("\\.0+$", "")
                 .replaceFirst("^0E-.+$", "0");
     }
 
-    private static String trimMoreZeros(BigDecimal value) {
+    public static String trimMoreZeros(BigDecimal value) {
         return value
                 .toString()
                 .replaceFirst("\\.?0+$", "")

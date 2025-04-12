@@ -1,5 +1,12 @@
 {
   "block.nayutachest.nayutachest": "那由多チェスト",
   "container.nayutachest.nayuta_chest": "那由多チェスト",
+  "gui.nayutachest.amount": "保管済み: ",
+  "gui.nayutachest.balance": "収支: ",
+  "gui.nayutachest.extraction_rate": "搬出レート: ",
+  "gui.nayutachest.insertion_rate": "搬入レート: ",
+  "gui.nayutachest.item": "アイテム: ",
+  "gui.nayutachest.max": "最大容量: ",
+  "gui.nayutachest.usage": "使用率: ",
   "item_group.nayutachest.general": "那由多チェスト"
 }

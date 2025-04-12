@@ -23,11 +23,9 @@ public class NayutaChestMenu extends AbstractContainerMenu {
     public final NayutaChestBE nayutaChestBlock;
     private final ContainerLevelAccess containerLevelAccess;
     public final ContainerData containerData;
-    //    private final ContainerData containerData;
 
-    private final int INPUT_SLOT;
-    private final int OUTPUT_SLOT;
-    private final int DISPLAY_SLOT;
+    public final int INPUT_SLOT;
+    public final int OUTPUT_SLOT;
 
     // Client
     public NayutaChestMenu(int containerId, Inventory playerInventory, FriendlyByteBuf extraData) {
@@ -56,7 +54,6 @@ public class NayutaChestMenu extends AbstractContainerMenu {
         int[] beSlots = createBESlots(be);
         INPUT_SLOT = beSlots[0];
         OUTPUT_SLOT = beSlots[1];
-        DISPLAY_SLOT = beSlots[2];
 
         addDataSlots(containerData);
     }
@@ -97,15 +94,8 @@ public class NayutaChestMenu extends AbstractContainerMenu {
                     125,
                     35
             ));
-            Slot display = this.addSlot(new SlotItemHandler(
-                    displayHandler,
-                    NayutaChestDisplayHandler.SLOT_DISPLAY,
-                    80,
-                    35
-            ));
             slotIndexes[0] = input.index;
             slotIndexes[1] = output.index;
-            slotIndexes[2] = display.index;
 
             StringBuilder stackLog = new StringBuilder();
             for (int i = 0; i < displayHandler.getSlots(); i++) {
@@ -165,10 +155,7 @@ public class NayutaChestMenu extends AbstractContainerMenu {
     }
 
     public boolean moveContainerToPlayer(Player player, int slotIndex, ItemStack itemStack) {
-        // Prevent moving display slot (#38) to inventory
-        if (slotIndex >= DISPLAY_SLOT) return false;
-
-        // Move BE item (#36-38) to inventory slot (#0-35)
+        // Move BE item (#36-37) to inventory slot (#0-35)
         return this.moveBetweenInventoryAndBE(
                 itemStack,
                 0,
