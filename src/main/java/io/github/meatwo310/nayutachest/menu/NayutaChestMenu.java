@@ -127,8 +127,6 @@ public class NayutaChestMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         }
 
-        ItemStack itemStackCopy = itemStack.copy();
-
         boolean success;
         if (slotIndex < Inventory.INVENTORY_SIZE) {
             success = this.movePlayerToContainer(player, slotIndex, itemStack);
@@ -142,7 +140,7 @@ public class NayutaChestMenu extends AbstractContainerMenu {
         slot.setChanged();
         slot.onTake(player, itemStack);
 
-        return itemStackCopy;
+        return ItemStack.EMPTY;
     }
 
     public boolean movePlayerToContainer(Player player, int slotIndex, ItemStack itemStack) {
