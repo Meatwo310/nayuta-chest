@@ -7,6 +7,8 @@ import io.github.meatwo310.nayutachest.config.ClientConfig;
 import io.github.meatwo310.nayutachest.config.ServerConfig;
 import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import io.github.meatwo310.nayutachest.menu.NayutaChestMenu;
+import io.github.meatwo310.nayutachest.util.BigDecimalUtil;
+import io.github.meatwo310.nayutachest.util.BigIntegerUtil;
 import io.github.meatwo310.nayutachest.util.IntShift;
 import io.github.meatwo310.nayutachest.util.NumberFormatter;
 import net.minecraft.ChatFormatting;
@@ -26,18 +28,16 @@ import org.slf4j.Logger;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.List;
 
 public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMenu> {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(NayutaChest.MODID, "textures/gui/nayutachest_screen.png");
-    private static final int FONT_COLOR = new IForgeGuiGraphics(){}.getColorFromFormattingCharacter('f', false);
     private static final boolean FONT_SHADOW = false;
     private static final Component PER_TICK = Component.literal("/t").withStyle(ChatFormatting.GRAY);
-    private static final BigDecimal BIGDECIMAL_HUNDRED = new BigDecimal(100);
 
+    public static final int FONT_COLOR = new IForgeGuiGraphics(){}.getColorFromFormattingCharacter('f', false);
     public static final int FAKE_STACK_X = 80;
     public static final int FAKE_STACK_Y = 35;
 
@@ -139,10 +139,7 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
         if (!this.isHovering(FAKE_STACK_X - 2, FAKE_STACK_Y - 2, 20, 20, mouseX, mouseY)) return;
 
         BigInteger max = ServerConfig.storageSizeCache;
-        BigDecimal usage = new BigDecimal(this.amount)
-                .multiply(BIGDECIMAL_HUNDRED)
-                .divide(new BigDecimal(max), RoundingMode.DOWN)
-                .setScale(2, RoundingMode.DOWN);
+        BigDecimal usage = BigDecimalUtil.getRate(this.amount.multiply(BigIntegerUtil.HUNDRED), max, 2);
         BigInteger balance = this.inserted.subtract(this.extracted);
 
         List<Component> components = List.of(

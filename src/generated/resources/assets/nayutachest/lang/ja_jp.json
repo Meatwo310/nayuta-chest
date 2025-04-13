@@ -1,5 +1,6 @@
 {
   "block.nayutachest.nayutachest": "那由多チェスト",
+  "config.jade.plugin_nayutachest.contents": "正確なアイテム数を表示",
   "container.nayutachest.nayuta_chest": "那由多チェスト",
   "gui.nayutachest.amount": "保管済み: ",
   "gui.nayutachest.balance": "収支: ",

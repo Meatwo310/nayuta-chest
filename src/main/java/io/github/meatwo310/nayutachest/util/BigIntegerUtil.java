@@ -3,6 +3,8 @@ package io.github.meatwo310.nayutachest.util;
 import java.math.BigInteger;
 
 public class BigIntegerUtil {
+    public static final BigInteger HUNDRED = BigInteger.valueOf(100);
+
     /**
      * Converts a BigInteger to an int, clamping to {@link Integer#MAX_VALUE}.
      * @see #asIntOr(BigInteger, int)

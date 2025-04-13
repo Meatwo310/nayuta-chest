@@ -1,5 +1,6 @@
 {
   "block.nayutachest.nayutachest": "Nayuta Chest",
+  "config.jade.plugin_nayutachest.contents": "Show accurate item count",
   "container.nayutachest.nayuta_chest": "Nayuta Chest",
   "gui.nayutachest.amount": "Amount: %s",
   "gui.nayutachest.balance": "Balance: %s",

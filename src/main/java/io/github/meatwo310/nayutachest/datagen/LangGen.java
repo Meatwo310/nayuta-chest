@@ -34,6 +34,8 @@ public class LangGen {
             add(NayutaChestMenuScreen.INSERTION_RATE_KEY, "Insertion Rate: %s");
             add(NayutaChestMenuScreen.EXTRACTION_RATE_KEY, "Extraction Rate: %s");
             add(NayutaChestMenuScreen.BALANCE_KEY, "Balance: %s");
+
+            add("config.jade.plugin_nayutachest.contents", "Show accurate item count");
         }
     }
 
@@ -55,6 +57,8 @@ public class LangGen {
             add(NayutaChestMenuScreen.INSERTION_RATE_KEY, "搬入レート: ");
             add(NayutaChestMenuScreen.EXTRACTION_RATE_KEY, "搬出レート: ");
             add(NayutaChestMenuScreen.BALANCE_KEY, "収支: ");
+
+            add("config.jade.plugin_nayutachest.contents", "正確なアイテム数を表示");
         }
     }
 }

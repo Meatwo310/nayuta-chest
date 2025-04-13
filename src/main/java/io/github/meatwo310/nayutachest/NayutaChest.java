@@ -9,6 +9,7 @@ import io.github.meatwo310.nayutachest.config.ServerConfig;
 import io.github.meatwo310.nayutachest.item.ModCreativeModeTabs;
 import io.github.meatwo310.nayutachest.item.ModItems;
 import io.github.meatwo310.nayutachest.menu.ModMenus;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -34,5 +35,9 @@ public class NayutaChest {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+    }
+
+    public static ResourceLocation getResourceLoc(String path) {
+        return new ResourceLocation(MODID, path);
     }
 }
