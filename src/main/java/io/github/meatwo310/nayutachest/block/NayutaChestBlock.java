@@ -84,7 +84,8 @@ public class NayutaChestBlock extends Block implements EntityBlock {
                     level.isClientSide ? "Client" : "Server",
                     ((NayutaChestBE) Objects.requireNonNull(level.getBlockEntity(blockPos))).chestHandlerLazyOptional
                             .orElseThrow(IllegalStateException::new)
-                            .getStackCount()
+                            .getValineStackInSlot(1)
+                            .count()
             )));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

@@ -2,7 +2,6 @@ package io.github.meatwo310.nayutachest.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
-import io.github.meatwo310.nayutachest.handler.NayutaChestDisplayHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,7 +37,7 @@ public class NayutaChestBERenderer implements BlockEntityRenderer<NayutaChestBE>
         })));
 
         blockEntity.chestHandlerLazyOptional.ifPresent(handler -> itemRenderer.renderStatic(
-                handler.getStackInSlot(NayutaChestDisplayHandler.SLOT_OUTPUT),
+                handler.getStackInSlot(1),
                 ItemDisplayContext.GROUND,
                 getLightLevel(blockEntity.getLevel(), blockEntity.getBlockPos()),
                 OverlayTexture.NO_OVERLAY,

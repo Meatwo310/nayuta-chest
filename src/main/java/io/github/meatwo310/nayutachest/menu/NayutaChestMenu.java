@@ -3,8 +3,10 @@ package io.github.meatwo310.nayutachest.menu;
 import com.mojang.logging.LogUtils;
 import io.github.meatwo310.nayutachest.block.ModBlocks;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
-import io.github.meatwo310.nayutachest.handler.NayutaChestDisplayHandler;
-import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
+import io.github.valine3gdev.valineapi.item.ValineDisplayHandler;
+import io.github.valine3gdev.valineapi.item.ValineItemHandlerHelper;
+import io.github.valine3gdev.valineapi.item.ValineItemStack;
+import io.github.valine3gdev.valineapi.item.ValineItemStackHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -84,13 +86,13 @@ public class NayutaChestMenu extends AbstractContainerMenu {
         blockEntity.displayHandlerLazyOptional.ifPresent(displayHandler -> {
             Slot input = this.addSlot(new SlotItemHandler(
                     displayHandler,
-                    NayutaChestDisplayHandler.SLOT_INPUT,
+                    ValineDisplayHandler.SLOT_INPUT,
                     35,
                     35
             ));
             Slot output = this.addSlot(new SlotItemHandler(
                     displayHandler,
-                    NayutaChestDisplayHandler.SLOT_OUTPUT,
+                    1,
                     125,
                     35
             ));
@@ -132,7 +134,6 @@ public class NayutaChestMenu extends AbstractContainerMenu {
             success = this.movePlayerToContainer(player, slotIndex, itemStack);
         } else {
             success = this.moveContainerToPlayer(player, slotIndex, itemStack);
-//            return ItemStack.EMPTY;
         }
         if (!success) {
             return ItemStack.EMPTY;
@@ -172,16 +173,18 @@ public class NayutaChestMenu extends AbstractContainerMenu {
     private boolean moveBetweenInventoryAndBE(@NotNull ItemStack stack, int start, int size, boolean lastToFirst) {
         boolean moved = false;
         for (int i = (lastToFirst ? size - 1 : start); (lastToFirst ? i >= start : i < size); i += (lastToFirst ? -1 : 1)) {
+            LOGGER.info("i: {}", i);
             if (stack.isEmpty()) {
                 break;
             }
             if (!this.canInsert(i, stack)) {
                 continue;
             }
-            NayutaChestHandler chestHandler = this.nayutaChestBlock.chestHandlerLazyOptional.orElseThrow(() ->
+            LOGGER.info("insertable");
+            ValineItemStackHandler chestHandler = this.nayutaChestBlock.chestHandlerLazyOptional.orElseThrow(() ->
                     new IllegalStateException("chestHandlerLazyOptional is not present")
             );
-            ItemStack stackInSlot = chestHandler.getStackInSlot(NayutaChestHandler.SLOT_OUTPUT);
+            ItemStack stackInSlot = chestHandler.getStackInSlot(1);
             if (!stackInSlot.isEmpty() && !ItemStack.isSameItemSameTags(stack, stackInSlot)) {
                 continue;
             }
@@ -189,7 +192,7 @@ public class NayutaChestMenu extends AbstractContainerMenu {
             ItemStack targetStack = targetSlot.getItem();
             if (i < Inventory.INVENTORY_SIZE) {
                 int toExtract = Math.min(stack.getCount(), targetSlot.getMaxStackSize() - targetStack.getCount());
-                ItemStack extracted = chestHandler.extractItem(NayutaChestHandler.SLOT_OUTPUT, toExtract, false);
+                ItemStack extracted = chestHandler.extractItem(1, toExtract, false);
                 if (extracted.isEmpty()) {
                     continue;
                 }
@@ -200,7 +203,7 @@ public class NayutaChestMenu extends AbstractContainerMenu {
                     targetStack.grow(extracted.getCount());
                 }
             } else {
-                ItemStack remaining = chestHandler.insertItem(NayutaChestHandler.SLOT_INPUT, stack.copy(), false);
+                ItemStack remaining = ValineItemHandlerHelper.insertItemStacked(chestHandler, new ValineItemStack(stack), false).toItemStack();
                 if (remaining.getCount() >= stack.getCount()) {
                     continue;
                 }
@@ -228,10 +231,10 @@ public class NayutaChestMenu extends AbstractContainerMenu {
         if (slotIndex != INPUT_SLOT || !this.nayutaChestBlock.chestHandlerLazyOptional.isPresent()) {
             return false;
         }
-        NayutaChestHandler chestHandler = this.nayutaChestBlock.chestHandlerLazyOptional.orElseThrow(() ->
+        ValineItemStackHandler chestHandler = this.nayutaChestBlock.chestHandlerLazyOptional.orElseThrow(() ->
                 new IllegalStateException("chestHandlerLazyOptional is present but not present")
         );
-        ItemStack remaining = chestHandler.insertItem(NayutaChestHandler.SLOT_INPUT, stack, true);
+        ItemStack remaining = ValineItemHandlerHelper.insertItemStacked(chestHandler, new ValineItemStack(stack), true).toItemStack();
         return remaining.getCount() < stack.getCount();
     }
     
@@ -242,7 +245,7 @@ public class NayutaChestMenu extends AbstractContainerMenu {
         Slot targetSlot = this.slots.get(slotIndex);
         ItemStack targetStack = targetSlot.getItem();
         return (targetStack.isEmpty() && targetSlot.mayPlace(stack) ||
-                ItemStack.isSameItemSameTags(stack, targetStack) && targetStack.getCount() < targetSlot.getMaxStackSize()
+                ItemStack.isSameItemSameTags(stack, targetStack) && targetStack.getCount() < targetStack.getMaxStackSize()
         );
     }
 }

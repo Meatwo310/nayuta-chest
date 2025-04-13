@@ -5,12 +5,12 @@ import io.github.meatwo310.nayutachest.NayutaChest;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
 import io.github.meatwo310.nayutachest.config.ClientConfig;
 import io.github.meatwo310.nayutachest.config.ServerConfig;
-import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import io.github.meatwo310.nayutachest.menu.NayutaChestMenu;
 import io.github.meatwo310.nayutachest.util.BigDecimalUtil;
-import io.github.meatwo310.nayutachest.util.BigIntegerUtil;
 import io.github.meatwo310.nayutachest.util.IntShift;
 import io.github.meatwo310.nayutachest.util.NumberFormatter;
+import io.github.valine3gdev.valineapi.item.ValineItemStackHandler;
+import io.github.valine3gdev.valineapi.util.BigIntegerUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -55,7 +55,7 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
     String insertedString = "";
     BigInteger extracted = BigInteger.ZERO;
     String extractedString = "";
-    NayutaChestHandler handler = null;
+    ValineItemStackHandler handler = null;
     BigInteger amount = BigInteger.ZERO;
     String itemCountString = "";
 
@@ -95,10 +95,10 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
         ).toBigInteger();
         this.extractedString = new NumberFormatter(this.extracted).to(this.numFormat, this.precision);
 
-        LazyOptional<NayutaChestHandler> handlerLazyOptional = this.menu.nayutaChestBlock.chestHandlerLazyOptional;
+        LazyOptional<ValineItemStackHandler> handlerLazyOptional = this.menu.nayutaChestBlock.chestHandlerLazyOptional;
         if (handlerLazyOptional.isPresent()) {
             this.handler = handlerLazyOptional.orElseThrow(IllegalStateException::new);
-            this.amount = this.handler.getStackCount();
+            this.amount = this.handler.getValineStackInSlot(1).count();
             this.itemCountString = new NumberFormatter(this.amount).to(this.numFormat, this.precision);
         } else {
             this.handler = null;
@@ -131,7 +131,7 @@ public class NayutaChestMenuScreen extends AbstractContainerScreen<NayutaChestMe
 
         if (this.handler == null) return;
 
-        ItemStack stack = this.handler.getStackInSlot(NayutaChestHandler.SLOT_OUTPUT);
+        ItemStack stack = this.handler.getStackInSlot(1);
         if (stack.isEmpty()) return;
         ItemStack fakeStack = stack.copyWithCount(1);
         guiGraphics.renderFakeItem(fakeStack, FAKE_STACK_X, FAKE_STACK_Y);

@@ -3,11 +3,11 @@ package io.github.meatwo310.nayutachest.blockentity;
 import com.mojang.logging.LogUtils;
 import io.github.meatwo310.nayutachest.NayutaChest;
 import io.github.meatwo310.nayutachest.block.NayutaChestBlock;
-import io.github.meatwo310.nayutachest.handler.NayutaChestDisplayHandler;
-import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import io.github.meatwo310.nayutachest.menu.NayutaChestMenu;
 import io.github.meatwo310.nayutachest.util.IntShift;
 import io.github.meatwo310.nayutachest.util.ItemStackHandlerUtil;
+import io.github.valine3gdev.valineapi.item.ValineDisplayHandler;
+import io.github.valine3gdev.valineapi.item.ValineItemStackHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -40,7 +40,7 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
     public static final String TITLE_KEY = "container." + NayutaChest.MODID + ".nayuta_chest";
     private static final Component TITLE = Component.translatable(TITLE_KEY);
 
-    private final NayutaChestHandler chestHandler = new NayutaChestHandler() {
+    private final ValineItemStackHandler chestHandler = new ValineItemStackHandler() {
         @Override
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
@@ -72,10 +72,10 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
             return result;
         }
     };
-    private final NayutaChestDisplayHandler displayHandler;
+    private final ValineDisplayHandler displayHandler;
 
-    public final LazyOptional<NayutaChestHandler> chestHandlerLazyOptional = LazyOptional.of(() -> this.chestHandler);
-    public LazyOptional<NayutaChestDisplayHandler> displayHandlerLazyOptional;
+    public final LazyOptional<ValineItemStackHandler> chestHandlerLazyOptional = LazyOptional.of(() -> this.chestHandler);
+    public LazyOptional<ValineDisplayHandler> displayHandlerLazyOptional;
 
     private BigInteger inserted = BigInteger.ZERO;
     private BigInteger extracted = BigInteger.ZERO;
@@ -86,7 +86,7 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
 
     public NayutaChestBE(BlockPos blockPos, BlockState blockState) {
         super(ModBlockEntities.NAYUTA_CHEST.get(), blockPos, blockState);
-        this.displayHandler = new NayutaChestDisplayHandler(this.chestHandler);
+        this.displayHandler = new ValineDisplayHandler(this.chestHandler);
         this.displayHandlerLazyOptional = LazyOptional.of(() -> this.displayHandler);
     }
 
@@ -100,13 +100,13 @@ public class NayutaChestBE extends BlockEntity implements MenuProvider {
         nayutaChestBE.insertedAvg = nayutaChestBE.inserted.divide(BigInteger.valueOf(frequency));
         nayutaChestBE.extractedAvg = nayutaChestBE.extracted.divide(BigInteger.valueOf(frequency));
 
-        LOGGER.debug(
-                "NayutaChestBE at: {} | profiled {} ticks | in: {} items/t | out: {} items/t",
-                blockPos,
-                frequency,
-                nayutaChestBE.insertedAvg,
-                nayutaChestBE.extractedAvg
-        );
+//        LOGGER.debug(
+//                "NayutaChestBE at: {} | profiled {} ticks | in: {} items/t | out: {} items/t",
+//                blockPos,
+//                frequency,
+//                nayutaChestBE.insertedAvg,
+//                nayutaChestBE.extractedAvg
+//        );
 
         nayutaChestBE.inserted = BigInteger.ZERO;
         nayutaChestBE.extracted = BigInteger.ZERO;

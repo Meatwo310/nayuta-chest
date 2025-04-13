@@ -4,9 +4,9 @@ import io.github.meatwo310.nayutachest.NayutaChest;
 import io.github.meatwo310.nayutachest.blockentity.NayutaChestBE;
 import io.github.meatwo310.nayutachest.config.ClientConfig;
 import io.github.meatwo310.nayutachest.config.ServerConfig;
-import io.github.meatwo310.nayutachest.handler.NayutaChestHandler;
 import io.github.meatwo310.nayutachest.util.BigDecimalUtil;
 import io.github.meatwo310.nayutachest.util.NumberFormatter;
+import io.github.valine3gdev.valineapi.item.ValineItemStackHandler;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -38,12 +38,12 @@ public enum NayutaChestComponentProvider implements IBlockComponentProvider {
         if (!(blockAccessor.getBlockEntity() instanceof NayutaChestBE nayutaChestBE)) return;
         if (!nayutaChestBE.chestHandlerLazyOptional.isPresent()) return;
 
-        NayutaChestHandler handler = nayutaChestBE.chestHandlerLazyOptional.orElseThrow(IllegalStateException::new);
-        ItemStack stack = handler.getStackInSlot(NayutaChestHandler.SLOT_OUTPUT);
+        ValineItemStackHandler handler = nayutaChestBE.chestHandlerLazyOptional.orElseThrow(IllegalStateException::new);
+        ItemStack stack = handler.getStackInSlot(1);
 
         if (stack.isEmpty()) return;
 
-        BigInteger amount = handler.getStackCount();
+        BigInteger amount = handler.getValineStackInSlot(1).count();
         BigInteger max = ServerConfig.storageSizeCache;
         float usage = BigDecimalUtil.getRate(amount, max, 2).floatValue();
 
